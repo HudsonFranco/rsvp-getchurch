@@ -94,9 +94,15 @@
                     <input type="tel" id="telefone" placeholder="Seu WhatsApp"
                         class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
 
-                    <div class="pt-4">
-                        <p class="text-slate-500 text-sm font-bold mb-4">Escolha a Data e Hora</p>
-                        <input type="datetime-local" id="data-hora" step="1800" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                    <div class="space-y-4 pt-4">
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-2">Selecione o Dia</p>
+                            <input type="date" id="data-solo" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                        </div>
+                        <div>
+                            <p class="text-slate-500 text-sm font-bold mb-2">Selecione a Hora</p>
+                            <input type="time" id="hora-solo" step="1800" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                        </div>
                     </div>
 
                     <button onclick="handleAgendar()" id="submit-btn"
@@ -123,9 +129,8 @@
                 return;
             }
 
-            // Define data mínima como agora para o relógio nativo
-            const now = new Date();
-            document.getElementById('data-hora').min = now.toISOString().slice(0, 16);
+            // Define data mínima como hoje
+            document.getElementById('data-solo').min = new Date().toISOString().split('T')[0];
 
             try {
                 // 1. Busca o clã e o anfitrião
@@ -158,13 +163,15 @@
         async function handleAgendar() {
             const nome = document.getElementById('nome').value;
             const telefone = document.getElementById('telefone').value;
-            const dataHora = document.getElementById('data-hora').value;
+            const dataSolo = document.getElementById('data-solo').value;
+            const horaSolo = document.getElementById('hora-solo').value;
 
-            if (!nome || !telefone || !dataHora) {
+            if (!nome || !telefone || !dataSolo || !horaSolo) {
                 alert('Por favor, preencha todos os campos!');
                 return;
             }
 
+            const dataHora = `${dataSolo}T${horaSolo}`;
             const selectedDate = new Date(dataHora);
             const hour = selectedDate.getHours();
             const minutes = selectedDate.getMinutes();
