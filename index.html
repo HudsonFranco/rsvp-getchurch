@@ -132,6 +132,8 @@
             const nome = document.getElementById('nome').value;
             const sobrenome = document.getElementById('sobrenome').value;
             const telefone = document.getElementById('telefone').value;
+            const nomeCompleto = nome + ' ' + sobrenome;
+            const nomeEvento = document.getElementById('clan-name').innerText;
 
             if (!nome || !sobrenome || !telefone || !batizado) {
                 alert('Por favor, preencha todos os campos!');
@@ -143,26 +145,34 @@
             btn.disabled = true;
 
             try {
-                const { error } = await supabaseClient.from('GET | Presenca').insert({
-                    id_evento: clanId,
-                    nome, sobrenome, telefone, batizado,
-                    created_at: new Date().toISOString()
+                // 1. Salva na tabela de Presença
+                const { error: errorPresenca } = await supabaseClient.from('GET | Presenca').insert({
+                    id_calendar: clanId, // Usando o ID que vem da URL
+                    nome_contato: nomeCompleto,
+                    nome_evento: 'GET FLN | [CLA] ' + nomeEvento,
+                    tipo_presenca: 'CONFIRMADO',
+                    id_presenca: crypto.randomUUID() // Gerando um ID único
                 });
 
-                if (error) throw error;
+                if (errorPresenca) throw errorPresenca;
 
-                // Opcional: Salva no CRM
-                await supabaseClient.from('GET | Contatos').insert({
-                    nome_contato: nome + ' ' + sobrenome,
-                    telefone,
-                    cla_principal: document.getElementById('clan-name').innerText,
+                // 2. Salva ou atualiza no CRM (Contatos)
+                const { error: errorContato } = await supabaseClient.from('GET | Contatos').insert({
+                    id_contato: crypto.randomUUID(),
+                    nome_contato: nomeCompleto,
+                    telefone: telefone,
+                    batizado: batizado,
+                    cla_principal: 'GET FLN | [CLA] ' + nomeEvento,
                     data_entrada: new Date().toISOString().split('T')[0]
                 });
+
+                if (errorContato) console.warn('Aviso: Contato não pôde ser criado, mas presença foi salva.');
 
                 document.getElementById('main-content').classList.add('hidden');
                 document.getElementById('success').classList.remove('hidden');
             } catch (err) {
-                alert('Erro ao confirmar presença. Tente novamente.');
+                console.error(err);
+                alert('Erro ao confirmar presença: ' + (err.message || 'Erro de campos'));
                 btn.innerText = 'Eu Vou! 🚀';
                 btn.disabled = false;
             }

@@ -34,15 +34,19 @@
 
         <!-- Main Content -->
         <div id="main-content" class="hidden">
-            <div class="text-center mb-10">
-                <div class="inline-block p-4 rounded-3xl bg-amber-500/10 border border-amber-500/20 mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.712 11.312l1.688-1.688a1.5 1.5 0 012.121 2.121l-1.688 1.688-2.121-2.121zM2.25 2.25l19.5 19.5M4.5 4.5l15 15M6.75 6.75l10.5 10.5" />
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14.25l-2.25 2.25m0 0l-2.25-2.25m2.25 2.25V10.5" />
+            <div class="text-center mb-10 pt-4">
+                <div class="inline-block p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 mb-6 shadow-2xl shadow-amber-900/20">
+                    <!-- Ícone de Café mais bonito -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+                        <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
+                        <line x1="6" y1="2" x2="6" y2="4"></line>
+                        <line x1="10" y1="2" x2="10" y2="4"></line>
+                        <line x1="14" y1="2" x2="14" y2="4"></line>
                     </svg>
                 </div>
-                <h2 class="text-3xl font-black tracking-tighter text-white">Café com Anfitrião</h2>
-                <p class="text-slate-500 font-medium mt-2">Escolha o melhor momento para conversarmos.</p>
+                <h2 class="text-4xl font-black tracking-tighter text-white leading-none">Café com Anfitrião</h2>
+                <p class="text-slate-500 font-medium mt-4">Escolha o melhor momento para conversarmos.</p>
             </div>
 
             <!-- Host Info -->
@@ -131,20 +135,22 @@
             try {
                 // Salva na tabela de Vendas (Agendamentos)
                 const { error } = await supabaseClient.from('GET | Vendas').insert({
-                    produto: 'Café com Anfitrião',
+                    produto: 'Café com Anfitrião (' + currentHost + ')',
                     nome: nome,
                     telefone: telefone,
-                    vendedor: currentHost,
                     data: dataHora,
                     created_at: new Date().toISOString()
                 });
 
-                if (error) throw error;
+                if (error) {
+                    console.error('ERRO SUPABASE:', error);
+                    throw error;
+                }
 
                 document.getElementById('main-content').classList.add('hidden');
                 document.getElementById('success').classList.remove('hidden');
             } catch (err) {
-                alert('Erro ao agendar. Tente novamente.');
+                alert('Erro ao agendar: ' + (err.message || 'Erro de permissão ou campos'));
                 btn.innerText = 'Agendar Café ☕';
                 btn.disabled = false;
             }
