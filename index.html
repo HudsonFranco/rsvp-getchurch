@@ -147,12 +147,14 @@
             btn.disabled = true;
 
             try {
+                console.log('Enviando para o banco com ChurchID:', churchId);
                 // 1. Salva na tabela de Presença
                 const { error: errorPresenca } = await supabaseClient.from('GET | Presenca').insert({
                     church_id: churchId,
                     id_calendar: clanId,
                     nome_contato: nomeCompleto,
                     nome_evento: 'GET FLN | [CLA] ' + nomeEvento,
+                    data_evento: new Date().toISOString().split('T')[0], // Define a data para hoje
                     tipo_presenca: 'CONFIRMADO',
                     id_presenca: crypto.randomUUID()
                 });

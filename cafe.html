@@ -92,6 +92,10 @@
                 return;
             }
 
+            // Define data mínima como agora
+            const now = new Date();
+            document.getElementById('data-hora').min = now.toISOString().slice(0, 16);
+
             try {
                 // 1. Busca o clã e o anfitrião
                 const { data: clanData } = await supabaseClient
@@ -130,6 +134,22 @@
                 return;
             }
 
+            const selectedDate = new Date(dataHora);
+            const hour = selectedDate.getHours();
+            const minutes = selectedDate.getMinutes();
+
+            // Validação de Horário (08:00 às 21:00)
+            if (hour < 8 || (hour >= 21 && minutes > 0)) {
+                alert('Os agendamentos devem ser entre 08:00 e 21:00.');
+                return;
+            }
+
+            // Validação de 30 em 30 minutos
+            if (minutes !== 0 && minutes !== 30) {
+                alert('Por favor, escolha um horário de 30 em 30 minutos (Ex: 09:00 ou 09:30).');
+                return;
+            }
+
             const btn = document.getElementById('submit-btn');
             btn.innerText = 'Agendando...';
             btn.disabled = true;
@@ -145,15 +165,12 @@
                     created_at: new Date().toISOString()
                 });
 
-                if (error) {
-                    console.error('ERRO SUPABASE:', error);
-                    throw error;
-                }
+                if (error) throw error;
 
                 document.getElementById('main-content').classList.add('hidden');
                 document.getElementById('success').classList.remove('hidden');
             } catch (err) {
-                alert('Erro ao agendar: ' + (err.message || 'Erro de permissão ou campos'));
+                alert('Erro ao agendar: ' + (err.message || 'Tente novamente'));
                 btn.innerText = 'Agendar Café ☕';
                 btn.disabled = false;
             }
