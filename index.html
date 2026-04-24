@@ -155,6 +155,7 @@
                     nome_contato: nomeCompleto,
                     nome_evento: 'GET FLN | [CLA] ' + nomeEvento,
                     data_evento: new Date().toISOString().split('T')[0], // Define a data para hoje
+                    funcao_cla: telefone,
                     tipo_presenca: 'CONFIRMADO',
                     id_presenca: crypto.randomUUID()
                 });

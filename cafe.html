@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,11 +9,32 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0a0a0b; color: white; }
-        .glass { background: rgba(22, 22, 24, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
-        .amber-glow { shadow-color: #d97706; shadow-offset: { width: 0, height: 10 }; shadow-opacity: 0.3; shadow-radius: 20; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0b;
+            color: white;
+        }
+
+        .glass {
+            background: rgba(22, 22, 24, 0.8);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .amber-glow {
+            shadow-color: #d97706;
+
+            shadow-offset: {
+                width: 0, height: 10
+            }
+
+            ;
+            shadow-opacity: 0.3;
+            shadow-radius: 20;
+        }
     </style>
 </head>
+
 <body class="min-h-screen flex items-center justify-center p-6">
     <div id="app" class="w-full max-w-md">
         <!-- Loading State -->
@@ -23,21 +45,26 @@
 
         <!-- Success State -->
         <div id="success" class="hidden text-center py-20">
-            <div class="bg-amber-500/10 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div
+                class="bg-amber-500/10 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
             </div>
             <h1 class="text-3xl font-black tracking-tighter mb-4">Café Agendado!</h1>
-            <p class="text-slate-500 text-lg leading-relaxed">Em breve o anfitrião entrará em contato com você para confirmar os detalhes. ☕✨</p>
+            <p class="text-slate-500 text-lg leading-relaxed">Em breve o anfitrião entrará em contato com você para
+                confirmar os detalhes. ☕✨</p>
         </div>
 
         <!-- Main Content -->
         <div id="main-content" class="hidden">
             <div class="text-center mb-10 pt-4">
-                <div class="inline-block p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 mb-6 shadow-2xl shadow-amber-900/20">
+                <div
+                    class="inline-block p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 mb-6 shadow-2xl shadow-amber-900/20">
                     <!-- Ícone de Café mais bonito -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                        stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
                         <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
                         <line x1="6" y1="2" x2="6" y2="4"></line>
@@ -51,7 +78,8 @@
 
             <!-- Host Info -->
             <div class="glass p-6 rounded-[32px] mb-6 flex items-center">
-                <div class="w-12 h-12 bg-slate-800 rounded-full mr-4 flex items-center justify-center font-bold text-slate-400" id="host-initials">?</div>
+                <div class="w-12 h-12 bg-slate-800 rounded-full mr-4 flex items-center justify-center font-bold text-slate-400"
+                    id="host-initials">?</div>
                 <div>
                     <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Anfitrião</p>
                     <p class="text-white font-bold" id="host-name">Carregando...</p>
@@ -61,15 +89,27 @@
             <!-- Form -->
             <div class="glass p-8 rounded-[40px] shadow-2xl">
                 <div class="space-y-4">
-                    <input type="text" id="nome" placeholder="Seu Nome" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
-                    <input type="tel" id="telefone" placeholder="Seu WhatsApp" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
-                    
+                    <input type="text" id="nome" placeholder="Seu Nome"
+                        class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                    <input type="tel" id="telefone" placeholder="Seu WhatsApp"
+                        class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+
                     <div class="pt-4">
-                        <p class="text-slate-500 text-sm font-bold mb-4">Escolha a Data e Hora</p>
-                        <input type="datetime-local" id="data-hora" step="1800" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                        <p class="text-slate-500 text-sm font-bold mb-4">1. Escolha a Data</p>
+                        <input type="date" id="data-selecao" onchange="generateTimeSlots()"
+                            class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium mb-6">
+
+                        <div id="time-slots-container" class="hidden">
+                            <p class="text-slate-500 text-sm font-bold mb-4">2. Escolha o Horário</p>
+                            <div id="time-slots" class="grid grid-cols-3 gap-3">
+                                <!-- Horários serão gerados aqui -->
+                            </div>
+                        </div>
+                        <input type="hidden" id="data-hora">
                     </div>
 
-                    <button onclick="handleAgendar()" id="submit-btn" class="w-full bg-amber-600 hover:bg-amber-500 py-6 rounded-[28px] font-black text-lg uppercase tracking-widest mt-8 shadow-2xl shadow-amber-600/30 transition-all">
+                    <button onclick="handleAgendar()" id="submit-btn"
+                        class="w-full bg-amber-600 hover:bg-amber-500 py-6 rounded-[28px] font-black text-lg uppercase tracking-widest mt-8 shadow-2xl shadow-amber-600/30 transition-all">
                         Agendar Café ☕
                     </button>
                 </div>
@@ -85,6 +125,7 @@
         const clanId = new URLSearchParams(window.location.search).get('id');
         let currentHost = null;
         let churchId = null;
+        let selectedTime = null;
 
         async function init() {
             if (!clanId) {
@@ -92,19 +133,19 @@
                 return;
             }
 
-            // Define data mínima como agora para o relógio nativo
-            const now = new Date();
-            document.getElementById('data-hora').min = now.toISOString().slice(0, 16);
+            // Define data mínima como hoje
+            document.getElementById('data-selecao').min = new Date().toISOString().split('T')[0];
 
             try {
                 // ... rest of init logic ...
+                // 1. Busca o clã e o anfitrião
                 const { data: clanData } = await supabaseClient
                     .from('dash_get_fln_eventos_01')
                     .select('nome_evento')
                     .eq('sb_id_evento', clanId)
                     .single();
 
-                churchId = 'f5d2343c-a215-4c34-87ef-12ac5ce17ef6'; 
+                churchId = 'f5d2343c-a215-4c34-87ef-12ac5ce17ef6'; // ID da Igreja Letícia
                 const { data: hostData } = await supabaseClient
                     .from('dash_get_fln_contato_01')
                     .select('nome_contato')
@@ -124,23 +165,44 @@
             }
         }
 
+        function generateTimeSlots() {
+            const container = document.getElementById('time-slots-container');
+            const grid = document.getElementById('time-slots');
+            grid.innerHTML = '';
+            container.classList.remove('hidden');
+
+            for (let h = 8; h <= 21; h++) {
+                const times = [`${String(h).padStart(2, '0')}:00`, `${String(h).padStart(2, '0')}:30`];
+                if (h === 21) times.pop(); // Remove 21:30
+
+                times.forEach(t => {
+                    const btn = document.createElement('button');
+                    btn.innerText = t;
+                    btn.className = 'bg-[#0a0a0b] border border-white/5 py-3 rounded-xl font-bold text-slate-500 hover:border-amber-500 transition-all slot-btn';
+                    btn.onclick = () => selectTime(t, btn);
+                    grid.appendChild(btn);
+                });
+            }
+        }
+
+        function selectTime(time, btn) {
+            selectedTime = time;
+            document.querySelectorAll('.slot-btn').forEach(b => {
+                b.className = 'bg-[#0a0a0b] border border-white/5 py-3 rounded-xl font-bold text-slate-500 hover:border-amber-500 transition-all slot-btn';
+            });
+            btn.className = 'bg-amber-600/10 border border-amber-500 py-3 rounded-xl font-bold text-amber-500 transition-all slot-btn';
+
+            const date = document.getElementById('data-selecao').value;
+            document.getElementById('data-hora').value = `${date}T${time}`;
+        }
+
         async function handleAgendar() {
             const nome = document.getElementById('nome').value;
             const telefone = document.getElementById('telefone').value;
             const dataHora = document.getElementById('data-hora').value;
 
             if (!nome || !telefone || !dataHora) {
-                alert('Por favor, preencha todos os campos!');
-                return;
-            }
-
-            const selectedDate = new Date(dataHora);
-            const hour = selectedDate.getHours();
-            const minutes = selectedDate.getMinutes();
-
-            // Validação de Horário (08:00 às 21:00)
-            if (hour < 8 || (hour >= 21 && minutes > 0)) {
-                alert('Os agendamentos devem ser entre 08:00 e 21:00.');
+                alert('Por favor, preencha todos os campos e escolha um horário!');
                 return;
             }
 
@@ -173,4 +235,5 @@
         init();
     </script>
 </body>
+
 </html>
