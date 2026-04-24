@@ -96,11 +96,11 @@
                 // 1. Busca o clã e o anfitrião
                 const { data: clanData } = await supabaseClient
                     .from('dash_get_fln_eventos_01')
-                    .select('nome_evento, church_id')
+                    .select('nome_evento')
                     .eq('sb_id_evento', clanId)
                     .single();
 
-                churchId = clanData.church_id;
+                churchId = 'f5d2343c-a215-4c34-87ef-12ac5ce17ef6'; // ID da Igreja Letícia
                 const { data: hostData } = await supabaseClient
                     .from('dash_get_fln_contato_01')
                     .select('nome_contato')

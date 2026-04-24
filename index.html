@@ -110,7 +110,7 @@
 
                 if (error) throw error;
 
-                churchId = data.church_id; // Pega o ID da igreja aqui
+                churchId = data.church_id || 'f5d2343c-a215-4c34-87ef-12ac5ce17ef6'; // Fallback para ID da Letícia
                 document.getElementById('clan-name').innerText = data.nome_evento.replace('GET FLN | [CLA] ', '');
                 document.getElementById('clan-date').innerText = data.dia_semana_evento;
                 document.getElementById('clan-time').innerText = data.horario_evento;
