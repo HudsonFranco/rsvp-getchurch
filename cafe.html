@@ -84,6 +84,7 @@
 
         const clanId = new URLSearchParams(window.location.search).get('id');
         let currentHost = null;
+        let churchId = null;
 
         async function init() {
             if (!clanId) {
@@ -95,10 +96,11 @@
                 // 1. Busca o clã e o anfitrião
                 const { data: clanData } = await supabaseClient
                     .from('dash_get_fln_eventos_01')
-                    .select('nome_evento')
+                    .select('nome_evento, church_id')
                     .eq('sb_id_evento', clanId)
                     .single();
 
+                churchId = clanData.church_id;
                 const { data: hostData } = await supabaseClient
                     .from('dash_get_fln_contato_01')
                     .select('nome_contato')
@@ -135,6 +137,7 @@
             try {
                 // Salva na tabela de Vendas (Agendamentos)
                 const { error } = await supabaseClient.from('GET | Vendas').insert({
+                    church_id: churchId,
                     produto: 'Café com Anfitrião (' + currentHost + ')',
                     nome: nome,
                     telefone: telefone,

@@ -92,6 +92,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let batizado = null;
+        let churchId = null;
         const clanId = new URLSearchParams(window.location.search).get('id');
 
         async function init() {
@@ -109,6 +110,7 @@
 
                 if (error) throw error;
 
+                churchId = data.church_id; // Pega o ID da igreja aqui
                 document.getElementById('clan-name').innerText = data.nome_evento.replace('GET FLN | [CLA] ', '');
                 document.getElementById('clan-date').innerText = data.dia_semana_evento;
                 document.getElementById('clan-time').innerText = data.horario_evento;
@@ -147,11 +149,12 @@
             try {
                 // 1. Salva na tabela de Presença
                 const { error: errorPresenca } = await supabaseClient.from('GET | Presenca').insert({
-                    id_calendar: clanId, // Usando o ID que vem da URL
+                    church_id: churchId,
+                    id_calendar: clanId,
                     nome_contato: nomeCompleto,
                     nome_evento: 'GET FLN | [CLA] ' + nomeEvento,
                     tipo_presenca: 'CONFIRMADO',
-                    id_presenca: crypto.randomUUID() // Gerando um ID único
+                    id_presenca: crypto.randomUUID()
                 });
 
                 if (errorPresenca) throw errorPresenca;
@@ -159,6 +162,7 @@
                 // 2. Salva ou atualiza no CRM (Contatos)
                 const { error: errorContato } = await supabaseClient.from('GET | Contatos').insert({
                     id_contato: crypto.randomUUID(),
+                    church_id: churchId,
                     nome_contato: nomeCompleto,
                     telefone: telefone,
                     batizado: batizado,
