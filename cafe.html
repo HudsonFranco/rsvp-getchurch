@@ -95,17 +95,8 @@
                         class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
 
                     <div class="pt-4">
-                        <p class="text-slate-500 text-sm font-bold mb-4">1. Escolha a Data</p>
-                        <input type="date" id="data-selecao" onchange="generateTimeSlots()"
-                            class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium mb-6">
-
-                        <div id="time-slots-container" class="hidden">
-                            <p class="text-slate-500 text-sm font-bold mb-4">2. Escolha o Horário</p>
-                            <div id="time-slots" class="grid grid-cols-3 gap-3">
-                                <!-- Horários serão gerados aqui -->
-                            </div>
-                        </div>
-                        <input type="hidden" id="data-hora">
+                        <p class="text-slate-500 text-sm font-bold mb-4">Escolha a Data e Hora</p>
+                        <input type="datetime-local" id="data-hora" step="1800" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
                     </div>
 
                     <button onclick="handleAgendar()" id="submit-btn"
@@ -125,7 +116,6 @@
         const clanId = new URLSearchParams(window.location.search).get('id');
         let currentHost = null;
         let churchId = null;
-        let selectedTime = null;
 
         async function init() {
             if (!clanId) {
@@ -133,11 +123,11 @@
                 return;
             }
 
-            // Define data mínima como hoje
-            document.getElementById('data-selecao').min = new Date().toISOString().split('T')[0];
+            // Define data mínima como agora para o relógio nativo
+            const now = new Date();
+            document.getElementById('data-hora').min = now.toISOString().slice(0, 16);
 
             try {
-                // ... rest of init logic ...
                 // 1. Busca o clã e o anfitrião
                 const { data: clanData } = await supabaseClient
                     .from('dash_get_fln_eventos_01')
@@ -165,44 +155,23 @@
             }
         }
 
-        function generateTimeSlots() {
-            const container = document.getElementById('time-slots-container');
-            const grid = document.getElementById('time-slots');
-            grid.innerHTML = '';
-            container.classList.remove('hidden');
-
-            for (let h = 8; h <= 21; h++) {
-                const times = [`${String(h).padStart(2, '0')}:00`, `${String(h).padStart(2, '0')}:30`];
-                if (h === 21) times.pop(); // Remove 21:30
-
-                times.forEach(t => {
-                    const btn = document.createElement('button');
-                    btn.innerText = t;
-                    btn.className = 'bg-[#0a0a0b] border border-white/5 py-3 rounded-xl font-bold text-slate-500 hover:border-amber-500 transition-all slot-btn';
-                    btn.onclick = () => selectTime(t, btn);
-                    grid.appendChild(btn);
-                });
-            }
-        }
-
-        function selectTime(time, btn) {
-            selectedTime = time;
-            document.querySelectorAll('.slot-btn').forEach(b => {
-                b.className = 'bg-[#0a0a0b] border border-white/5 py-3 rounded-xl font-bold text-slate-500 hover:border-amber-500 transition-all slot-btn';
-            });
-            btn.className = 'bg-amber-600/10 border border-amber-500 py-3 rounded-xl font-bold text-amber-500 transition-all slot-btn';
-
-            const date = document.getElementById('data-selecao').value;
-            document.getElementById('data-hora').value = `${date}T${time}`;
-        }
-
         async function handleAgendar() {
             const nome = document.getElementById('nome').value;
             const telefone = document.getElementById('telefone').value;
             const dataHora = document.getElementById('data-hora').value;
 
             if (!nome || !telefone || !dataHora) {
-                alert('Por favor, preencha todos os campos e escolha um horário!');
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
+
+            const selectedDate = new Date(dataHora);
+            const hour = selectedDate.getHours();
+            const minutes = selectedDate.getMinutes();
+
+            // Validação de Horário (08:00 às 21:00)
+            if (hour < 8 || (hour >= 21 && minutes > 0)) {
+                alert('Os agendamentos devem ser entre 08:00 e 21:00.');
                 return;
             }
 
