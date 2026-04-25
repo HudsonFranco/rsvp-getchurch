@@ -7,64 +7,65 @@
     <title>Café com Anfitrião - Get Church</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0b;
+        body { font-family: 'Inter', sans-serif; background-color: #0a0a0b; color: white; }
+        .glass { background: rgba(22, 22, 24, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); }
+        input, select {
+            background: #0a0a0b;
             color: white;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px;
+            padding: 16px 20px;
+            width: 100%;
+            outline: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
         }
-
-        .glass {
-            background: rgba(22, 22, 24, 0.8);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .amber-glow {
-            shadow-color: #d97706;
-
-            shadow-offset: {
-                width: 0, height: 10
-            }
-
-            ;
-            shadow-opacity: 0.3;
-            shadow-radius: 20;
-        }
+        input:focus, select:focus { border-color: #d97706; }
+        select option { background: #161618; color: white; }
+        label { display: block; font-size: 11px; font-weight: 900; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
     </style>
 </head>
 
 <body class="min-h-screen flex items-center justify-center p-6">
     <div id="app" class="w-full max-w-md">
-        <!-- Loading State -->
+
+        <!-- Loading -->
         <div id="loading" class="text-center py-20">
             <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
             <p class="text-slate-500 font-medium">Preparando o café...</p>
         </div>
 
-        <!-- Success State -->
-        <div id="success" class="hidden text-center py-20">
-            <div
-                class="bg-amber-500/10 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
+        <!-- Sucesso Direto (anfitrião direto) -->
+        <div id="success-direct" class="hidden text-center py-20">
+            <div class="bg-amber-500/10 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                 </svg>
             </div>
             <h1 class="text-3xl font-black tracking-tighter mb-4">Café Agendado!</h1>
-            <p class="text-slate-500 text-lg leading-relaxed">Em breve o anfitrião entrará em contato com você para
-                confirmar os detalhes. ☕✨</p>
+            <p class="text-slate-400 text-lg leading-relaxed">Em breve o anfitrião entrará em contato para confirmar os detalhes. ☕✨</p>
         </div>
 
-        <!-- Main Content -->
+        <!-- Sucesso Solicitação -->
+        <div id="success-solicitacao" class="hidden text-center py-20">
+            <div class="bg-amber-500/10 w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-8 border border-amber-500/20">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h1 class="text-3xl font-black tracking-tighter mb-4">Solicitação Enviada!</h1>
+            <p class="text-slate-400 text-lg leading-relaxed">O anfitrião escolhido irá entrar em contato para confirmar o melhor dia e hora. ☕</p>
+        </div>
+
+        <!-- Conteúdo Principal -->
         <div id="main-content" class="hidden">
-            <div class="text-center mb-10 pt-4">
-                <div
-                    class="inline-block p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 mb-6 shadow-2xl shadow-amber-900/20">
-                    <!-- Ícone de Café mais bonito -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
-                        stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <div class="text-center mb-8 pt-4">
+                <div class="inline-block p-6 rounded-[32px] bg-amber-500/10 border border-amber-500/20 mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
                         <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"></path>
                         <line x1="6" y1="2" x2="6" y2="4"></line>
@@ -73,40 +74,52 @@
                     </svg>
                 </div>
                 <h2 class="text-4xl font-black tracking-tighter text-white leading-none">Café com Anfitrião</h2>
-                <p class="text-slate-500 font-medium mt-4">Escolha o melhor momento para conversarmos.</p>
+                <p class="text-slate-500 font-medium mt-4" id="subtitle">Escolha o melhor momento para conversarmos.</p>
             </div>
 
-            <!-- Host Info -->
-            <div class="glass p-6 rounded-[32px] mb-6 flex items-center">
-                <div class="w-12 h-12 bg-slate-800 rounded-full mr-4 flex items-center justify-center font-bold text-slate-400"
-                    id="host-initials">?</div>
+            <!-- Card do Anfitrião (fluxo direto) -->
+            <div id="host-card" class="glass p-5 rounded-[28px] mb-5 flex items-center hidden">
+                <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-full mr-4 flex items-center justify-center font-bold text-amber-500 text-lg" id="host-initials">?</div>
                 <div>
                     <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest">Anfitrião</p>
                     <p class="text-white font-bold" id="host-name">Carregando...</p>
                 </div>
             </div>
 
-            <!-- Form -->
-            <div class="glass p-8 rounded-[40px] shadow-2xl">
+            <!-- Formulário -->
+            <div class="glass p-7 rounded-[36px]">
                 <div class="space-y-4">
-                    <input type="text" id="nome" placeholder="Seu Nome"
-                        class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
-                    <input type="tel" id="telefone" placeholder="Seu WhatsApp"
-                        class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                    <div>
+                        <label>Seu Nome</label>
+                        <input type="text" id="nome" placeholder="Ex: Maria Silva">
+                    </div>
+                    <div>
+                        <label>Seu WhatsApp (com DDD)</label>
+                        <input type="tel" id="telefone" placeholder="Ex: 51999999999">
+                    </div>
 
-                    <div class="space-y-4 pt-4">
-                        <div>
-                            <p class="text-slate-500 text-sm font-bold mb-2">Selecione o Dia</p>
-                            <input type="date" id="data-solo" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                    <!-- Seletor de Anfitrião (fluxo solicitação) -->
+                    <div id="anfitriao-selector" class="hidden">
+                        <label>Escolha o Anfitrião</label>
+                        <select id="anfitriao-select">
+                            <option value="">Carregando anfitriões...</option>
+                        </select>
+                    </div>
+
+                    <!-- Data e Hora (fluxo direto) -->
+                    <div id="datetime-fields">
+                        <div class="mb-4">
+                            <label>Dia de Preferência</label>
+                            <input type="date" id="data-solo">
                         </div>
                         <div>
-                            <p class="text-slate-500 text-sm font-bold mb-2">Selecione a Hora</p>
-                            <input type="time" id="hora-solo" step="1800" class="w-full bg-[#0a0a0b] text-white px-6 py-4 rounded-2xl border border-white/5 focus:border-amber-500 outline-none transition-all font-medium">
+                            <label>Hora de Preferência</label>
+                            <input type="time" id="hora-solo" step="1800">
                         </div>
                     </div>
 
                     <button onclick="handleAgendar()" id="submit-btn"
-                        class="w-full bg-amber-600 hover:bg-amber-500 py-6 rounded-[28px] font-black text-lg uppercase tracking-widest mt-8 shadow-2xl shadow-amber-600/30 transition-all">
+                        class="w-full bg-amber-600 hover:bg-amber-500 py-5 rounded-[24px] font-black text-base uppercase tracking-widest mt-4 transition-all shadow-2xl shadow-amber-600/20">
                         Agendar Café ☕
                     </button>
                 </div>
@@ -117,93 +130,152 @@
     <script>
         const SUPABASE_URL = 'https://bharigikjtlifxqlsokl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_0ZYIPvU_kw9vdjtO0YcliQ_iRGZqBtF';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        const clanId = new URLSearchParams(window.location.search).get('id');
-        let currentHost = null;
+        const params = new URLSearchParams(window.location.search);
+        const clanId = params.get('id');
+
+        let currentHost = null;   // para fluxo direto
         let churchId = null;
+        let isDirectFlow = false; // true = anfitrião direto, false = solicitação
+        let liderNome = null;
+        let liderContatoId = null;
+        let anfitrioes = [];
 
         async function init() {
             if (!clanId) {
-                document.getElementById('loading').innerHTML = '<p class="text-red-500">Erro: Clã não identificado.</p>';
+                document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold text-center">Erro: Link inválido.</p>';
                 return;
             }
 
-            // Define data mínima como hoje
             document.getElementById('data-solo').min = new Date().toISOString().split('T')[0];
 
             try {
-                // 1. Busca o clã e o anfitrião
-                const { data: clanData } = await supabaseClient
-                    .from('dash_get_fln_eventos_01')
-                    .select('nome_evento')
+                // 1. Busca o evento (clã) pelo ID
+                const { data: clanData, error: clanErr } = await sb
+                    .from('dash_eventos_01')
+                    .select('nome_evento, church_id, id_contato_lider')
                     .eq('sb_id_evento', clanId)
-                    .single();
-
-                churchId = 'f5d2343c-a215-4c34-87ef-12ac5ce17ef6'; // ID da Igreja Letícia
-                const { data: hostData } = await supabaseClient
-                    .from('dash_get_fln_contato_01')
-                    .select('nome_contato')
-                    .eq('cla_principal', clanData.nome_evento)
-                    .eq('servico_anfitriao', 'Anfitrião')
                     .maybeSingle();
 
-                currentHost = hostData?.nome_contato || 'Anfitrião do Clã';
-                document.getElementById('host-name').innerText = currentHost;
-                document.getElementById('host-initials').innerText = currentHost.charAt(0);
+                if (clanErr || !clanData) throw new Error('Clã não encontrado');
+                churchId = clanData.church_id;
+
+                // 2. Verifica se o líder desse clã é anfitrião (tem link_calendar_anfitriao_user)
+                const { data: liderData } = await sb
+                    .from('dash_contato_01')
+                    .select('nome_contato, link_calendar_anfitriao_user, id_contato')
+                    .eq('id_contato', clanData.id_contato_lider)
+                    .maybeSingle();
+
+                liderNome = liderData?.nome_contato;
+                liderContatoId = liderData?.id_contato;
+
+                if (liderData?.link_calendar_anfitriao_user) {
+                    // FLUXO DIRETO: líder é anfitrião
+                    isDirectFlow = true;
+                    currentHost = liderData.nome_contato;
+                    document.getElementById('host-name').innerText = currentHost;
+                    document.getElementById('host-initials').innerText = currentHost.charAt(0);
+                    document.getElementById('host-card').classList.remove('hidden');
+                    document.getElementById('subtitle').innerText = 'Escolha o melhor momento para conversarmos.';
+                } else {
+                    // FLUXO SOLICITAÇÃO: carrega lista de anfitriões disponíveis
+                    isDirectFlow = false;
+                    await loadAnfitrioes(churchId);
+                    document.getElementById('anfitriao-selector').classList.remove('hidden');
+                    document.getElementById('subtitle').innerText = 'Escolha um anfitrião e o melhor momento.';
+                    document.getElementById('submit-btn').innerText = 'Solicitar Café ☕';
+                }
 
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
+
             } catch (err) {
                 console.error(err);
-                document.getElementById('loading').innerHTML = '<p class="text-red-500">Erro ao carregar anfitrião.</p>';
+                document.getElementById('loading').innerHTML = '<p class="text-red-500 font-bold text-center">Erro ao carregar. Tente novamente.</p>';
             }
         }
 
+        async function loadAnfitrioes(churchId) {
+            const { data } = await sb
+                .from('dash_contato_01')
+                .select('id_contato, nome_contato, telefone_contato')
+                .eq('church_id', churchId)
+                .not('link_calendar_anfitriao_user', 'is', null);
+
+            anfitrioes = data || [];
+            const select = document.getElementById('anfitriao-select');
+            select.innerHTML = '<option value="">Selecione um anfitrião...</option>';
+            anfitrioes.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.id_contato;
+                opt.textContent = a.nome_contato;
+                select.appendChild(opt);
+            });
+        }
+
         async function handleAgendar() {
-            const nome = document.getElementById('nome').value;
-            const telefone = document.getElementById('telefone').value;
+            const nome = document.getElementById('nome').value.trim();
+            const telefone = document.getElementById('telefone').value.trim();
             const dataSolo = document.getElementById('data-solo').value;
             const horaSolo = document.getElementById('hora-solo').value;
 
-            if (!nome || !telefone || !dataSolo || !horaSolo) {
-                alert('Por favor, preencha todos os campos!');
+            if (!nome || !telefone) {
+                alert('Por favor, preencha seu nome e WhatsApp.');
                 return;
             }
 
-            const dataHora = `${dataSolo}T${horaSolo}`;
-            const selectedDate = new Date(dataHora);
-            const hour = selectedDate.getHours();
-            const minutes = selectedDate.getMinutes();
-
-            // Validação de Horário (08:00 às 21:00)
-            if (hour < 8 || (hour >= 21 && minutes > 0)) {
-                alert('Os agendamentos devem ser entre 08:00 e 21:00.');
-                return;
+            if (!isDirectFlow) {
+                const anfId = document.getElementById('anfitriao-select').value;
+                if (!anfId) { alert('Selecione um anfitrião.'); return; }
             }
 
             const btn = document.getElementById('submit-btn');
-            btn.innerText = 'Agendando...';
+            btn.innerText = 'Enviando...';
             btn.disabled = true;
 
             try {
-                // Salva na tabela de Vendas (Agendamentos)
-                const { error } = await supabaseClient.from('GET | Vendas').insert({
-                    church_id: churchId,
-                    produto: 'Café com Anfitrião (' + currentHost + ')',
-                    nome: nome,
-                    telefone: telefone,
-                    data: dataHora,
-                    created_at: new Date().toISOString()
-                });
+                if (isDirectFlow) {
+                    // Fluxo direto: salva em GET | Vendas
+                    if (!dataSolo || !horaSolo) { alert('Preencha data e hora.'); btn.disabled=false; btn.innerText='Agendar Café ☕'; return; }
+                    const { error } = await sb.from('GET | Vendas').insert({
+                        church_id: churchId,
+                        produto: `Café com Anfitrião (${currentHost})`,
+                        vendedor: currentHost,
+                        nome,
+                        telefone,
+                        data: `${dataSolo}T${horaSolo}`,
+                        origem: 'Link GetChurch',
+                        created_at: new Date().toISOString()
+                    });
+                    if (error) throw error;
+                    document.getElementById('main-content').classList.add('hidden');
+                    document.getElementById('success-direct').classList.remove('hidden');
+                } else {
+                    // Fluxo solicitação: salva em cafe_solicitacoes
+                    const anfId = document.getElementById('anfitriao-select').value;
+                    const anf = anfitrioes.find(a => a.id_contato === anfId);
+                    const dataPreferencia = dataSolo && horaSolo ? `${dataSolo}T${horaSolo}` : null;
 
-                if (error) throw error;
-
-                document.getElementById('main-content').classList.add('hidden');
-                document.getElementById('success').classList.remove('hidden');
+                    const { error } = await sb.from('cafe_solicitacoes').insert({
+                        church_id: churchId,
+                        solicitante_nome: nome,
+                        solicitante_telefone: telefone,
+                        lider_indicador_id: liderContatoId,
+                        lider_indicador_nome: liderNome,
+                        anfitriao_id: anfId,
+                        anfitriao_nome: anf?.nome_contato,
+                        anfitriao_telefone: anf?.telefone_contato,
+                        data_sugerida_anfitriao: dataPreferencia
+                    });
+                    if (error) throw error;
+                    document.getElementById('main-content').classList.add('hidden');
+                    document.getElementById('success-solicitacao').classList.remove('hidden');
+                }
             } catch (err) {
-                alert('Erro ao agendar: ' + (err.message || 'Tente novamente'));
-                btn.innerText = 'Agendar Café ☕';
+                alert('Erro: ' + (err.message || 'Tente novamente.'));
+                btn.innerText = isDirectFlow ? 'Agendar Café ☕' : 'Solicitar Café ☕';
                 btn.disabled = false;
             }
         }
@@ -211,5 +283,4 @@
         init();
     </script>
 </body>
-
 </html>
