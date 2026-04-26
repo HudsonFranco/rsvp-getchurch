@@ -200,7 +200,7 @@
         async function loadAnfitrioes(churchId) {
             const { data } = await sb
                 .from('dash_contato_01')
-                .select('id_contato, nome_contato, telefone_contato')
+                .select('id_contato, nome_contato, telefone')
                 .eq('church_id', churchId)
                 .not('link_calendar_anfitriao_user', 'is', null);
 
@@ -213,6 +213,9 @@
                 opt.textContent = a.nome_contato;
                 select.appendChild(opt);
             });
+            if (anfitrioes.length === 1) {
+                select.value = anfitrioes[0].id_contato;
+            }
         }
 
         async function handleAgendar() {
@@ -266,7 +269,7 @@
                         lider_indicador_nome: liderNome,
                         anfitriao_id: anfId,
                         anfitriao_nome: anf?.nome_contato,
-                        anfitriao_telefone: anf?.telefone_contato,
+                        anfitriao_telefone: anf?.telefone,
                         data_sugerida_anfitriao: dataPreferencia
                     });
                     if (error) throw error;
