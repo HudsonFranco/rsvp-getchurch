@@ -154,7 +154,7 @@
                 // 1. Busca o evento (clã) pelo ID
                 const { data: clanData, error: clanErr } = await sb
                     .from('dash_eventos_01')
-                    .select('nome_evento, church_id, id_contato_lider')
+                    .select('nome_evento, church_id, id_contato')
                     .eq('sb_id_evento', clanId)
                     .maybeSingle();
 
@@ -165,7 +165,7 @@
                 const { data: liderData } = await sb
                     .from('dash_contato_01')
                     .select('nome_contato, link_calendar_anfitriao_user, id_contato')
-                    .eq('id_contato', clanData.id_contato_lider)
+                    .eq('id_contato', clanData.id_contato)
                     .maybeSingle();
 
                 liderNome = liderData?.nome_contato;
