@@ -245,11 +245,9 @@
                     const { error } = await sb.from('GET | Vendas').insert({
                         church_id: churchId,
                         produto: `Café com Anfitrião (${currentHost})`,
-                        vendedor: currentHost,
                         nome,
                         telefone,
-                        data: `${dataSolo}T${horaSolo}`,
-                        origem: 'Link GetChurch',
+                        data: `${dataSolo}T${horaSolo}:00`,
                         created_at: new Date().toISOString()
                     });
                     if (error) throw error;
