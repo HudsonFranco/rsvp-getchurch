@@ -109,8 +109,10 @@
                     <!-- Data e Hora (fluxo direto) -->
                     <div id="datetime-fields">
                         <div class="mb-4">
-                            <label>Dia de Preferência</label>
-                            <input type="date" id="data-solo">
+                            <label>Dia do Encontro</label>
+                            <select id="data-solo">
+                                <option value="">Carregando datas...</option>
+                            </select>
                         </div>
                         <div>
                             <label>Hora de Preferência</label>
@@ -148,20 +150,19 @@
                 return;
             }
 
-            document.getElementById('data-solo').min = new Date().toISOString().split('T')[0];
-
             try {
-                // 1. Busca o evento (clã) pelo ID
+                // 1. Busca o evento (clã) pelo ID para pegar o dia da semana
                 const { data: clanData, error: clanErr } = await sb
                     .from('dash_eventos_01')
-                    .select('nome_evento, church_id, id_contato')
+                    .select('nome_evento, church_id, id_contato, dia_semana_evento')
                     .eq('sb_id_evento', clanId)
                     .maybeSingle();
 
                 if (clanErr || !clanData) throw new Error('Clã não encontrado');
                 churchId = clanData.church_id;
 
-                // 2. Verifica se o líder desse clã é anfitrião (tem link_calendar_anfitriao_user)
+                const diaSemana = clanData.dia_semana_evento;
+                preencherDatasDisponiveis(diaSemana);                // 2. Verifica se o líder desse clã é anfitrião (tem link_calendar_anfitriao_user)
                 const { data: liderData } = await sb
                     .from('dash_contato_01')
                     .select('nome_contato, link_calendar_anfitriao_user, id_contato')
@@ -216,6 +217,79 @@
             if (anfitrioes.length === 1) {
                 select.value = anfitrioes[0].id_contato;
             }
+        }
+        // Função para calcular os dias corretos baseados no dia do clã
+        function preencherDatasDisponiveis(diaSemanaStr) {
+            const selectData = document.getElementById('data-solo');
+            selectData.innerHTML = ''; // Limpa opções antigas
+
+            if (!diaSemanaStr) {
+                // Fallback se não tiver dia cadastrado
+                const hoje = new Date();
+                const v = hoje.toISOString().split('T')[0];
+                selectData.innerHTML = `<option value="${v}">${v}</option>`;
+                return;
+            }
+
+            const mapDias = {
+                'domingo': 0, 'dom': 0,
+                'segunda': 1, 'seg': 1, 'segunda-feira': 1,
+                'terça': 2, 'ter': 2, 'terça-feira': 2, 'terca': 2, 'terca-feira': 2,
+                'quarta': 3, 'qua': 3, 'quarta-feira': 3,
+                'quinta': 4, 'qui': 4, 'quinta-feira': 4,
+                'sexta': 5, 'sex': 5, 'sexta-feira': 5,
+                'sábado': 6, 'sab': 6, 'sabado': 6
+            };
+            
+            const strNormalizada = diaSemanaStr.toLowerCase().trim();
+            const targetDay = mapDias[strNormalizada] !== undefined ? mapDias[strNormalizada] : 1; // Fallback pra segunda
+
+            const dates = [];
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            // Acha o encontro passado (ex: a última segunda)
+            let pastDate = new Date(today);
+            while (pastDate.getDay() !== targetDay) {
+                pastDate.setDate(pastDate.getDate() - 1);
+            }
+            if (pastDate.getTime() === today.getTime()) {
+                // Se hoje for o dia do encontro, o encontro passado é semana passada
+                pastDate.setDate(pastDate.getDate() - 7);
+            }
+            dates.push(pastDate);
+
+            // Próximos 4 encontros
+            let nextDate = new Date(today);
+            if (nextDate.getDay() !== targetDay) {
+                nextDate.setDate(nextDate.getDate() + ((targetDay + 7 - nextDate.getDay()) % 7));
+            }
+            dates.push(nextDate);
+
+            for (let i = 1; i <= 3; i++) {
+                const futureDate = new Date(nextDate);
+                futureDate.setDate(futureDate.getDate() + (i * 7));
+                dates.push(futureDate);
+            }
+
+            // Popula o select
+            dates.forEach(d => {
+                const dia = String(d.getDate()).padStart(2, '0');
+                const mes = String(d.getMonth() + 1).padStart(2, '0');
+                const ano = d.getFullYear();
+                const valor = `${ano}-${mes}-${dia}`;
+                const formatado = `${dia}/${mes}/${ano}`;
+                
+                const option = document.createElement('option');
+                option.value = valor;
+                option.textContent = formatado;
+                
+                // Pré-seleciona o próximo encontro mais imediato
+                if (d.getTime() === nextDate.getTime()) {
+                    option.selected = true;
+                }
+                selectData.appendChild(option);
+            });
         }
 
         async function handleAgendar() {
