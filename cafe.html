@@ -328,21 +328,25 @@
                     document.getElementById('main-content').classList.add('hidden');
                     document.getElementById('success-direct').classList.remove('hidden');
                 } else {
-                    // Fluxo solicitação: salva em cafe_solicitacoes
+                     // Fluxo solicitação: salva na nova tabela unificada 'solicitacoes'
                     const anfId = document.getElementById('anfitriao-select').value;
                     const anf = anfitrioes.find(a => a.id_contato === anfId);
                     const dataPreferencia = dataSolo && horaSolo ? `${dataSolo}T${horaSolo}` : null;
 
-                    const { error } = await sb.from('cafe_solicitacoes').insert({
+                    const { error } = await sb.from('solicitacoes').insert({
                         church_id: churchId,
                         solicitante_nome: nome,
                         solicitante_telefone: telefone,
-                        lider_indicador_id: liderContatoId,
-                        lider_indicador_nome: liderNome,
-                        anfitriao_id: anfId,
-                        anfitriao_nome: anf?.nome_contato,
-                        anfitriao_telefone: anf?.telefone,
-                        data_sugerida_anfitriao: dataPreferencia
+                        tipo: 'cafe_anfitriao',
+                        status: 'recebido',
+                        payload: {
+                            lider_indicador_id: liderContatoId,
+                            lider_indicador_nome: liderNome,
+                            anfitriao_id: anfId,
+                            anfitriao_nome: anf?.nome_contato,
+                            anfitriao_telefone: anf?.telefone,
+                            data_sugerida_anfitriao: dataPreferencia
+                        }
                     });
                     if (error) throw error;
                     document.getElementById('main-content').classList.add('hidden');
